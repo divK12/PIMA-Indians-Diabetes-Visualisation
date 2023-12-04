@@ -1,4 +1,4 @@
-#MDS202322 divyanshi.mds2023@cmi.ac.in
+
 #PIMA INDIAN DIABETES DATASET ANALYSIS
 
 
