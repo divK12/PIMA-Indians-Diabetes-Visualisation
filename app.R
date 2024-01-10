@@ -1,6 +1,3 @@
-#PIMA INDIAN DIABETES DATASET ANALYSIS
-
-
 library(shiny)
 library(ggplot2)
 library(shinydashboard)
@@ -34,6 +31,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Home", tabName = "Home",icon = icon("home")),
+      menuItem("Dataset", tabName = "dataset", icon = icon("database")),
       menuItem("Univariate Analysis", tabName = "univariate_analysis",icon = icon("chart-line")),
       menuItem("Bivariate Analysis", tabName = "bivariate_analysis",icon = icon("chart-area")),
       menuItem("Conclusion", tabName = "conclusion",icon = icon("list-check"))
@@ -57,23 +55,42 @@ ui <- dashboardPage(
                   br(),
                   h4("The PIMA Indian Diabetes dataset is named after the PIMA people, a group of Native Americans living in United States, particularly Arizona.The dataset is focused on studying and understanding risk factors and characteristics associated with the development of type-2 diabetes among PIMA women."),
                   h4("link to the dataset:",a("https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database")),
-                  img(src = "https://wordpresscmsprodstor.blob.core.windows.net/wp-cms/2021/11/44b.webp", style = "max-width: 60%; height: auto;display: block; margin-left: auto; margin-right: auto;"),
-                  width = 18
+                  img(src = "https://wordpresscmsprodstor.blob.core.windows.net/wp-cms/2021/11/44b.webp", style = "max-width: 40%; height: 20%;display: block; margin-left: auto; margin-right: auto;"),
+                  width = 15
                 ),
                 box(
                   h4("Statistics"),
                   uiOutput("small_boxes"),  
-                  width = 12
+                  width = 10
                 ),
                 
               )
       ),
+      tabItem(tabName = "dataset",
+              fluidRow(
+                box(
+                  title = "Dataset Preview",
+                  h4( strong("Age"), "Age of the individual"),
+                  h4(strong("Pregnancies"), "Number of times Pregnant"),
+                  h4(strong("Glucose") ,"Plasma glucose concentration a 2 hours in an oral glucose tolerance test"),
+                  h4(strong("Blood Pressure"), " Diastolic Blood Pressure (mm Hg)"),
+                  h4(strong("Skin Thickness"), " Triceps skin fold thickness (mm)"),
+                  h4(strong("Insulin"), " 2-Hour serum insulin (mu U/ml)"),
+                  h4(strong("BMI"), "Body Mass Index"),
+                  h4(strong("Diabetes Pedigree Function"),"a measure of the diabetes heredity risk "),
+                  h4(strong("Outcome"), "0: NO Diabetes, 1: Diabetes"),
+                  tableOutput("dataset_preview"),  
+                  width = 18
+                )
+                )
+              ),
+                
       # Univariate Analysis Tab
       tabItem(tabName = "univariate_analysis",
               fluidRow(
                 box(
                   h2( strong("Univariate Analysis")),
-                  "This section provides a visual representation of the univariate relationships of features in the dataset with respect to the outcome",
+                  "This section provides a visual representation of the significant univariate relationships of features in the dataset with respect to the outcome",
                   selectInput("univariate_variable", "Select Features for Analysis", choices = c("Age","Pregnancies","Glucose","DiabetesPedigreeFunction")),
                   plotOutput("univariate_plot"),sliderInput("bins", "Select Number of Bins:", min = 1, max = 100, value = 10),
                   verbatimTextOutput("explanation_uni"),
@@ -88,7 +105,7 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   h2( strong("Bivariate Analysis")),
-                  "This section provides a visual representation of the bivariate relationships between features in the dataset with respect to Outcome",
+                  "This section provides a visual representation of the significant bivariate relationships between features in the dataset with respect to Outcome",
                   selectInput("y_variable", "Select Y Variable", choices = c("Glucose","Insulin","BMI")),
                   selectInput("x_variable", "Select X Variable", choices = c("Insulin","BMI","Glucose")),
                   plotOutput("bivariate_plot"),
@@ -140,6 +157,10 @@ server <- function(input, output) {
   }
   )
   
+  output$dataset_preview <- renderTable({
+    head(df, 10)  
+  })
+  
   output$explanation_bi<-renderText({
     a1=input$x_variable
     a2=input$y_variable
@@ -183,10 +204,10 @@ levels which may suggest increasing risks of Diabetes"
     mean_pregnancies <- mean(df$Pregnancies)
     proportions <- calculate_proportions()
     
-    box1 <- valueBox(median_age, "Median Age", icon = icon("users"),color="purple")
-    box2 <- valueBox(round(mean_pregnancies,2), "Mean Pregnancies", icon = icon("heartbeat"),color="purple")
-    box3 <- valueBox(paste0(round(100 * proportions[1], 2), "%"), "Proportion No Diabetes", icon = icon("thumbs-up"),color="purple")
-    box4 <- valueBox(paste0(round(100 * proportions[2], 2), "%"), "Proportion Diabetes", icon = icon("thumbs-down"),color="purple")
+    box1 <- valueBox(median_age, "Median Age", icon = icon("users"),color="purple",width=3)
+    box2 <- valueBox(round(mean_pregnancies,2), "Mean Pregnancies", icon = icon("heartbeat"),color="purple",width=3)
+    box3 <- valueBox(paste0(round(100 * proportions[1], 2), "%"), " No Diabetes", icon = icon("thumbs-up"),color="purple",width=3)
+    box4 <- valueBox(paste0(round(100 * proportions[2], 2), "%"), " Diabetes", icon = icon("thumbs-down"),color="purple",,width=3)
     
     fluidRow(box1, box2, box3, box4)
   })
